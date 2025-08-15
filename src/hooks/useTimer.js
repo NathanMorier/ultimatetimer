@@ -75,8 +75,8 @@ export const useTimer = () => {
           ...timer,
           isPaused: false,
           pausedTime: timer.pausedTime + pauseDuration,
-          lastPauseTime: null,
-          currentTime: getCurrentTime()
+          lastPauseTime: null
+          // Don't update currentTime - let it continue from where it was paused
         };
       }
       return timer;
