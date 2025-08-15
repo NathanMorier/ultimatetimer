@@ -1,16 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { theme } from './utils/theme';
 import TimerManager from './components/TimerManager';
+import CountdownManager from './components/CountdownManager';
 import CategoryManager from './components/CategoryManager';
 import Calendar from './components/Calendar';
 import Analytics from './components/Analytics';
 import SessionManager from './components/SessionManager';
+import { useActiveIndicators } from './hooks/useActiveIndicators';
+import { useGlobalCountdown, getGlobalCountdownManager } from './hooks/useGlobalCountdown';
+import { ModalProvider, useModal } from './contexts/ModalContext';
 import './App.css';
 
-function App() {
-  const [currentView, setCurrentView] = useState('timers'); // timers, categories, calendar, analytics, sessions
+function AppContent() {
+  const [currentView, setCurrentView] = useState('timers'); // timers, countdowns, categories, calendar, analytics, sessions
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { hasActiveTimers, hasActiveCountdowns } = useActiveIndicators();
+  const { showCountdownCompleteModal } = useModal();
+  
+  // Initialize global countdown manager (runs in background)
+  useGlobalCountdown();
+
+  // Connect modal callback to global countdown manager
+  useEffect(() => {
+    const manager = getGlobalCountdownManager();
+    manager.setModalCallback(showCountdownCompleteModal);
+  }, [showCountdownCompleteModal]);
 
   const handleNavClick = (view) => {
     setCurrentView(view);
@@ -41,7 +56,23 @@ function App() {
                 color: currentView === 'timers' ? 'white' : 'white'
               }}
             >
-              Timers
+              <span className="nav-text-wrapper">
+                Timers
+                {hasActiveTimers && <span className="nav-indicator">●</span>}
+              </span>
+            </button>
+                      <button 
+              className={`nav-tab ${currentView === 'countdowns' ? 'active' : ''}`}
+              onClick={() => handleNavClick('countdowns')}
+              style={{ 
+                backgroundColor: currentView === 'countdowns' ? theme.themeColor2 : 'transparent',
+                color: currentView === 'countdowns' ? 'white' : 'white'
+              }}
+            >
+              <span className="nav-text-wrapper">
+                Countdowns
+                {hasActiveCountdowns && <span className="nav-indicator">●</span>}
+              </span>
             </button>
                       <button 
               className={`nav-tab ${currentView === 'categories' ? 'active' : ''}`}
@@ -88,6 +119,7 @@ function App() {
 
       <main className="App-main">
         {currentView === 'timers' && <TimerManager />}
+        {currentView === 'countdowns' && <CountdownManager />}
         {currentView === 'categories' && <CategoryManager />}
         {currentView === 'calendar' && (
           <Calendar 
@@ -101,6 +133,14 @@ function App() {
         {currentView === 'sessions' && <SessionManager />}
       </main>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <ModalProvider>
+      <AppContent />
+    </ModalProvider>
   );
 }
 

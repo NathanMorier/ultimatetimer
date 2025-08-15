@@ -3,7 +3,8 @@
 const STORAGE_KEYS = {
   CATEGORIES: 'timer_categories',
   TIMERS: 'timer_sessions',
-  ACTIVE_TIMERS: 'active_timers'
+  ACTIVE_TIMERS: 'active_timers',
+  ACTIVE_COUNTDOWNS: 'active_countdowns'
 };
 
 // Category management
@@ -86,4 +87,21 @@ export const getTimerSessionsForDay = (date) => {
   endDate.setHours(23, 59, 59, 999);
   
   return getTimerSessionsForDateRange(startDate, endDate);
+};
+
+// Active countdowns management
+export const saveActiveCountdowns = (activeCountdowns) => {
+  localStorage.setItem(STORAGE_KEYS.ACTIVE_COUNTDOWNS, JSON.stringify(activeCountdowns));
+};
+
+export const loadActiveCountdowns = () => {
+  const stored = localStorage.getItem(STORAGE_KEYS.ACTIVE_COUNTDOWNS);
+  return stored ? JSON.parse(stored) : [];
+};
+
+// Helper function to add a new countdown session (saves to timer sessions)
+export const addCountdownSession = (session) => {
+  const sessions = loadTimerSessions();
+  sessions.push(session);
+  saveTimerSessions(sessions);
 };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { loadTimerSessions, saveTimerSessions } from '../utils/localStorage';
 import { useCategories } from '../hooks/useCategories';
 import { formatDurationHuman, formatDate, formatTime } from '../utils/timeUtils';
@@ -6,6 +6,16 @@ import { formatDurationHuman, formatDate, formatTime } from '../utils/timeUtils'
 const SessionManager = () => {
   const { categories, getCategoryById } = useCategories();
   const [sessions, setSessions] = useState(loadTimerSessions());
+
+  // Refresh sessions periodically to catch new countdown sessions
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const currentSessions = loadTimerSessions();
+      setSessions(currentSessions);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
   const [editingSession, setEditingSession] = useState(null);
   const [editForm, setEditForm] = useState({
     startTime: '',
