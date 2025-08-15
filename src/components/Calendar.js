@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { getDaysInMonth, getFirstDayOfMonth, getMonthName, formatDate } from '../utils/timeUtils';
 import { getTimerSessionsForMonth } from '../utils/localStorage';
 import { useCategories } from '../hooks/useCategories';
+import DailyAnalytics from './DailyAnalytics';
 
 const Calendar = ({ selectedMonth, onMonthChange }) => {
+  const [selectedDate, setSelectedDate] = useState(null);
   const { categories, getCategoryById } = useCategories();
   
   const year = selectedMonth.getFullYear();
@@ -28,6 +30,19 @@ const Calendar = ({ selectedMonth, onMonthChange }) => {
     const newMonth = new Date(selectedMonth);
     newMonth.setMonth(newMonth.getMonth() + direction);
     onMonthChange(newMonth);
+  };
+
+  const handleDayClick = (day) => {
+    const clickedDate = new Date(year, month, day);
+    setSelectedDate(clickedDate);
+    
+    // Scroll to daily analytics section
+    setTimeout(() => {
+      const analyticsElement = document.getElementById('daily-analytics');
+      if (analyticsElement) {
+        analyticsElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
   };
 
   const getCategoryIndicators = (day) => {
@@ -65,7 +80,9 @@ const Calendar = ({ selectedMonth, onMonthChange }) => {
       days.push(
         <div
           key={day}
-          className={`calendar-day ${hasSessions ? 'has-sessions' : ''} ${isToday ? 'today' : ''}`}
+          className={`calendar-day ${hasSessions ? 'has-sessions' : ''} ${isToday ? 'today' : ''} ${hasSessions ? 'clickable' : ''}`}
+          onClick={hasSessions ? () => handleDayClick(day) : undefined}
+          style={{ cursor: hasSessions ? 'pointer' : 'default' }}
         >
           <span className="day-number">{day}</span>
           {hasSessions && (
@@ -128,6 +145,11 @@ const Calendar = ({ selectedMonth, onMonthChange }) => {
             ))}
           </div>
         </div>
+      </div>
+      
+      {/* Daily Analytics Section */}
+      <div id="daily-analytics">
+        <DailyAnalytics selectedDate={selectedDate} />
       </div>
     </div>
   );

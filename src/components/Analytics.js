@@ -2,7 +2,7 @@ import React from 'react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { getTimerSessionsForMonth } from '../utils/localStorage';
 import { useCategories } from '../hooks/useCategories';
-import { formatDurationHuman, calculatePercentage, getMonthName } from '../utils/timeUtils';
+import { formatDurationHuman, calculatePercentage, getMonthName, formatDurationForAxis } from '../utils/timeUtils';
 
 const Analytics = ({ selectedMonth }) => {
   const { categories, getCategoryById } = useCategories();
@@ -44,11 +44,11 @@ const Analytics = ({ selectedMonth }) => {
     .filter(([_, stats]) => stats.category)
     .map(([categoryId, stats]) => ({
       name: stats.category.title,
-      hours: Math.round((stats.totalSeconds / 3600) * 100) / 100,
+      totalSeconds: stats.totalSeconds,
       sessions: stats.sessionCount,
       color: stats.category.color
     }))
-    .sort((a, b) => b.hours - a.hours);
+    .sort((a, b) => b.totalSeconds - a.totalSeconds);
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -77,7 +77,7 @@ const Analytics = ({ selectedMonth }) => {
           borderRadius: '4px'
         }}>
           <p className="label">{`${label}`}</p>
-          <p className="desc">{`${payload[0].value} hours`}</p>
+          <p className="desc">{`${formatDurationHuman(payload[0].value)}`}</p>
           <p className="desc">{`${payload[1].value} sessions`}</p>
         </div>
       );
@@ -112,16 +112,17 @@ const Analytics = ({ selectedMonth }) => {
           {pieChartData.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
-                <Pie
-                  data={pieChartData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percentage }) => `${name} (${percentage}%)`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
+                                 <Pie
+                   data={pieChartData}
+                   cx="50%"
+                   cy="50%"
+                   labelLine={false}
+                   label={({ name, percentage }) => `${name} (${percentage}%)`}
+                   outerRadius={80}
+                   fill="#8884d8"
+                   dataKey="value"
+                   labelStyle={{ fontSize: '12px', fontWeight: 'bold' }}
+                 >
                   {pieChartData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
@@ -134,24 +135,28 @@ const Analytics = ({ selectedMonth }) => {
           )}
         </div>
 
-        <div className="card">
-          <h3>Hours by Category (Bar Chart)</h3>
-          {barChartData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={barChartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} />
-                <YAxis />
-                <Tooltip content={<CustomBarTooltip />} />
-                <Legend />
-                <Bar dataKey="hours" fill="#8884d8" name="Hours" />
-                <Bar dataKey="sessions" fill="#82ca9d" name="Sessions" />
-              </BarChart>
-            </ResponsiveContainer>
-          ) : (
-            <p className="text-center">No data available for this month</p>
-          )}
-        </div>
+                 <div className="card">
+           <h3>Time by Category (Bar Chart)</h3>
+           {barChartData.length > 0 ? (
+             <ResponsiveContainer width="100%" height={300}>
+               <BarChart data={barChartData}>
+                 <CartesianGrid strokeDasharray="3 3" />
+                 <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} />
+                 <YAxis tickFormatter={formatDurationForAxis} />
+                 <Tooltip content={<CustomBarTooltip />} />
+                 <Legend />
+                 <Bar dataKey="totalSeconds" fill="#8884d8" name="Duration">
+                   {barChartData.map((entry, index) => (
+                     <Cell key={`cell-${index}`} fill={entry.color} />
+                   ))}
+                 </Bar>
+                 <Bar dataKey="sessions" fill="#82ca9d" name="Sessions" />
+               </BarChart>
+             </ResponsiveContainer>
+           ) : (
+             <p className="text-center">No data available for this month</p>
+           )}
+         </div>
       </div>
 
       <div className="card">

@@ -88,16 +88,20 @@ const TimerManager = () => {
                     backgroundColor: '#f8f9fa'
                   }}
                 >
-                  <div className="flex-between mb-2">
-                    <h3 style={{ color: category?.color || '#333' }}>
-                      {category?.title || 'Unknown Category'}
-                    </h3>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => handleStopTimer(timer.id)}
-                    >
-                      Stop
-                    </button>
+                  <div className="active-timer-item">
+                    <div className="active-timer-info">
+                      <h3 style={{ color: category?.color || '#333' }}>
+                        {category?.title || 'Unknown Category'}
+                      </h3>
+                    </div>
+                    <div className="active-timer-actions">
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => handleStopTimer(timer.id)}
+                      >
+                        Stop
+                      </button>
+                    </div>
                   </div>
                   
                   <TimerDisplay duration={duration} />

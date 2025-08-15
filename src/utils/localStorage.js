@@ -76,3 +76,14 @@ export const getTimerSessionsForMonth = (year, month) => {
   const endDate = new Date(year, month + 1, 0, 23, 59, 59);
   return getTimerSessionsForDateRange(startDate, endDate);
 };
+
+// Helper function to get timer sessions for a specific day
+export const getTimerSessionsForDay = (date) => {
+  const startDate = new Date(date);
+  startDate.setHours(0, 0, 0, 0);
+  
+  const endDate = new Date(date);
+  endDate.setHours(23, 59, 59, 999);
+  
+  return getTimerSessionsForDateRange(startDate, endDate);
+};

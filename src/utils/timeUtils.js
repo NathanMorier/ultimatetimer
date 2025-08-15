@@ -87,3 +87,15 @@ export const calculatePercentage = (value, total) => {
   if (total === 0) return 0;
   return Math.round((value / total) * 100);
 };
+
+// Helper function to format duration for chart axis (shows hours and minutes)
+export const formatDurationForAxis = (seconds) => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  
+  if (hours > 0) {
+    return `${hours}h ${minutes}m`;
+  } else {
+    return `${minutes}m`;
+  }
+};
