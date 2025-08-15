@@ -5,7 +5,7 @@ import { formatDuration } from '../utils/timeUtils';
 import TimerDisplay from './TimerDisplay';
 
 const TimerManager = () => {
-  const { activeTimers, startTimer, stopTimer, updateTimerNote, getTimerDuration } = useTimer();
+  const { activeTimers, startTimer, pauseTimer, resumeTimer, stopTimer, updateTimerNote, getTimerDuration } = useTimer();
   const { categories, getCategoryById } = useCategories();
   const [selectedCategory, setSelectedCategory] = useState('');
   const [note, setNote] = useState('');
@@ -19,6 +19,14 @@ const TimerManager = () => {
 
   const handleStopTimer = (timerId) => {
     stopTimer(timerId);
+  };
+
+  const handlePauseTimer = (timerId) => {
+    pauseTimer(timerId);
+  };
+
+  const handleResumeTimer = (timerId) => {
+    resumeTimer(timerId);
   };
 
   const handleUpdateNote = (timerId, newNote) => {
@@ -92,9 +100,34 @@ const TimerManager = () => {
                     <div className="active-timer-info">
                       <h3 style={{ color: category?.color || '#333' }}>
                         {category?.title || 'Unknown Category'}
+                        {timer.isPaused && (
+                          <span style={{ 
+                            fontSize: '0.8rem', 
+                            color: '#f44336', 
+                            marginLeft: '0.5rem',
+                            fontStyle: 'italic'
+                          }}>
+                            (PAUSED)
+                          </span>
+                        )}
                       </h3>
                     </div>
                     <div className="active-timer-actions">
+                      {timer.isPaused ? (
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => handleResumeTimer(timer.id)}
+                        >
+                          Resume
+                        </button>
+                      ) : (
+                        <button
+                          className="btn btn-secondary"
+                          onClick={() => handlePauseTimer(timer.id)}
+                        >
+                          Pause
+                        </button>
+                      )}
                       <button
                         className="btn btn-danger"
                         onClick={() => handleStopTimer(timer.id)}
@@ -104,7 +137,7 @@ const TimerManager = () => {
                     </div>
                   </div>
                   
-                  <TimerDisplay duration={duration} />
+                  <TimerDisplay duration={duration} isPaused={timer.isPaused} />
                   
                   <div className="form-group">
                     <label>Note:</label>

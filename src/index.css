@@ -533,6 +533,12 @@ code {
   .active-timer-actions {
     width: 100%;
     justify-content: flex-end;
+    gap: 0.5rem;
+  }
+  
+  .active-timer-actions .btn {
+    flex: 1;
+    min-width: 80px;
   }
   
   /* Calendar header mobile improvements */

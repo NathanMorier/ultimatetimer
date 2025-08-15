@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { formatDuration } from '../utils/timeUtils';
 
-const TimerDisplay = ({ duration }) => {
+const TimerDisplay = ({ duration, isPaused = false }) => {
   const [displayDuration, setDisplayDuration] = useState(duration);
 
   useEffect(() => {
@@ -10,11 +10,14 @@ const TimerDisplay = ({ duration }) => {
 
   return (
     <div className="timer-display">
-      <div className="timer-time">
+      <div className="timer-time" style={{ 
+        color: isPaused ? '#f44336' : '#4CAF50',
+        opacity: isPaused ? 0.7 : 1
+      }}>
         {formatDuration(displayDuration)}
       </div>
       <div className="timer-label">
-        Running...
+        {isPaused ? 'Paused' : 'Running...'}
       </div>
     </div>
   );
