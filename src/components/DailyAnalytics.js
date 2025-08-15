@@ -1,7 +1,7 @@
 import React from 'react';
 import { getTimerSessionsForDay } from '../utils/localStorage';
 import { useCategories } from '../hooks/useCategories';
-import { formatDurationHuman, formatDate, formatTime, calculatePercentage } from '../utils/timeUtils';
+import { formatDurationHuman, formatDate, formatTime, calculatePercentage, calculatePercentageOfDay } from '../utils/timeUtils';
 
 const DailyAnalytics = ({ selectedDate }) => {
   const { categories, getCategoryById } = useCategories();
@@ -45,7 +45,8 @@ const DailyAnalytics = ({ selectedDate }) => {
         category,
         sessions: stats.sessions,
         totalSeconds: stats.totalSeconds,
-        percentage: calculatePercentage(stats.totalSeconds, totalSeconds)
+        percentage: calculatePercentage(stats.totalSeconds, totalSeconds),
+        percentageOfDay: calculatePercentageOfDay(stats.totalSeconds, selectedDate)
       };
     })
     .filter(item => item.category) // Filter out any categories that don't exist
@@ -76,7 +77,7 @@ const DailyAnalytics = ({ selectedDate }) => {
         <div className="daily-breakdown">
           <h4>Breakdown by Category</h4>
           <div className="category-breakdown-list">
-            {categoryStats.map(({ category, sessions, totalSeconds, percentage }) => (
+            {categoryStats.map(({ category, sessions, totalSeconds, percentage, percentageOfDay }) => (
               <div
                 key={category.id}
                 className="category-stat-item"
@@ -88,7 +89,7 @@ const DailyAnalytics = ({ selectedDate }) => {
                 <div className="category-stat-header">
                   <div className="category-info">
                     <h5 style={{ color: category.color }}>{category.title}</h5>
-                    <span className="category-percentage">{percentage}% of day</span>
+                    <span className="category-percentage">{percentage}% of tracked time ({percentageOfDay}% of day)</span>
                   </div>
                   <div className="category-total">
                     {formatDurationHuman(totalSeconds)}

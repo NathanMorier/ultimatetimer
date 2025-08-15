@@ -88,6 +88,21 @@ export const calculatePercentage = (value, total) => {
   return Math.round((value / total) * 100);
 };
 
+// Calculate percentage of total available time in a month
+export const calculatePercentageOfMonth = (seconds, year, month) => {
+  const daysInMonth = getDaysInMonth(year, month);
+  const totalSecondsInMonth = daysInMonth * 24 * 60 * 60; // days * hours * minutes * seconds
+  if (totalSecondsInMonth === 0) return 0;
+  return Math.round((seconds / totalSecondsInMonth) * 100 * 100) / 100; // Round to 2 decimal places
+};
+
+// Calculate percentage of total available time in a day
+export const calculatePercentageOfDay = (seconds, date) => {
+  const totalSecondsInDay = 24 * 60 * 60; // 24 hours * 60 minutes * 60 seconds
+  if (totalSecondsInDay === 0) return 0;
+  return Math.round((seconds / totalSecondsInDay) * 100 * 100) / 100; // Round to 2 decimal places
+};
+
 // Helper function to format duration for chart axis (shows hours and minutes)
 export const formatDurationForAxis = (seconds) => {
   const hours = Math.floor(seconds / 3600);
