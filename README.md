@@ -57,7 +57,7 @@ A comprehensive time tracking application built with React that stores all data 
    ```bash
    npm start
    ```
-   This will start the React development server on port 3000.
+   This will start the React development server on port 3001.
 
 ### Alternative: Production Build with Python Server
 

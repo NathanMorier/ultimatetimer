@@ -62,9 +62,9 @@ def main():
     <div class="container">
         <h1>Ultimate LocalStorage Timer</h1>
         <div class="instructions">
-            <h3>To run the React development server:</h3>
-            <div class="command">npm start</div>
-            <p>This will start the development server on port 3000</p>
+                         <h3>To run the React development server:</h3>
+             <div class="command">npm start</div>
+             <p>This will start the development server on port 3001</p>
             
             <h3>To build and serve the production version:</h3>
             <div class="command">npm run build</div>
