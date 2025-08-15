@@ -61,7 +61,7 @@ class GlobalCountdownManager {
         addCountdownSession(session);
         
         // Play sound
-        const audio = new Audio('/end-timer.mp3');
+        const audio = new Audio('/ultimatetimer/end-timer.mp3');
         audio.play().catch(e => console.log('Audio play failed:', e));
         
         // Show modal if callback is available
