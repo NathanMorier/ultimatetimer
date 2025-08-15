@@ -137,7 +137,7 @@ const TimerManager = () => {
                     </div>
                   </div>
                   
-                  <TimerDisplay duration={duration} isPaused={timer.isPaused} />
+                  <TimerDisplay duration={duration} isPaused={timer.isPaused} showOverlay={timer.showOverlay} />
                   
                   <div className="form-group">
                     <label>Note:</label>

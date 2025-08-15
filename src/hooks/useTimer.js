@@ -42,7 +42,8 @@ export const useTimer = () => {
       note,
       isPaused: false,
       pausedTime: 0, // Total time paused in seconds
-      lastPauseTime: null // When the timer was last paused
+      lastPauseTime: null, // When the timer was last paused
+      showOverlay: false // Flag to show overlay during resume transition
     };
 
     const updated = [...activeTimers, newTimer];
@@ -71,18 +72,30 @@ export const useTimer = () => {
     const updated = activeTimers.map(timer => {
       if (timer.id === timerId && timer.isPaused) {
         const pauseDuration = calculateDuration(timer.lastPauseTime, getCurrentTime());
+        
         return {
           ...timer,
           isPaused: false,
           pausedTime: timer.pausedTime + pauseDuration,
-          lastPauseTime: null
-          // Don't update currentTime - let it continue from where it was paused
+          lastPauseTime: null,
+          showOverlay: true // Show overlay to cover the transition
         };
       }
       return timer;
     });
     setActiveTimers(updated);
     saveActiveTimers(updated);
+    
+    // Hide overlay after 1 second
+    setTimeout(() => {
+      setActiveTimers(prev => {
+        const updated = prev.map(timer => 
+          timer.id === timerId ? { ...timer, showOverlay: false } : timer
+        );
+        saveActiveTimers(updated);
+        return updated;
+      });
+    }, 1000);
   }, [activeTimers]);
 
   // Stop a timer
